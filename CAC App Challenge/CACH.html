@@ -1,0 +1,162 @@
+<!doctype html>
+
+<html lang="en">
+
+<head>
+
+<meta charset="utf-8" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<title>GeoTrainer — 50 U.S. States (Core Loop)</title>
+
+<style>
+
+  :root { --gap: 12px; --pad: 14px; }
+
+  * { box-sizing: border-box; }
+
+  body { margin: 0; font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; line-height: 1.45; }
+
+  header { padding: 12px 14px; border-bottom: 1px solid #e4e4e4; display: grid; gap: var(--gap); }
+
+  header .row { display: flex; gap: var(--gap); align-items: center; flex-wrap: wrap; }
+
+  h1 { margin: 0 16px 0 0; font-size: 20px; }
+
+  label { display: inline-flex; align-items: center; gap: 8px; }
+
+  select, button, input[type="text"] { font-size: 16px; padding: 8px 10px; }
+
+  button { cursor: pointer; }
+
+  button[disabled] { opacity: 0.6; cursor: not-allowed; }
+
+  #stats { margin-left: auto; color: #555; }
+
+  main { padding: 18px 14px; max-width: 900px; margin: 0 auto; }
+
+  #prompt { font-size: 22px; margin: 4px 0; }
+
+  #helper { color: #666; margin-bottom: 10px; }
+
+  #choices { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: var(--gap); margin-top: 6px; }
+
+  .choice { padding: var(--pad); border: 1px solid #cfcfcf; border-radius: 10px; background: #f7f7f7; text-align: left; }
+
+  .choice:focus { outline: 3px solid #222; }
+
+  .ok { background: #cdeece !important; border-color: #7fd189 !important; }
+
+  .bad { background: #f6cbc6 !important; border-color: #e39489 !important; }
+
+  #typingRow { display: none; gap: var(--gap); align-items: center; margin: 10px 0; }
+
+  #typingRow input { min-width: 260px; }
+
+  #feedback { min-height: 22px; margin-top: 8px; font-weight: 600; }
+
+  #end { border-top: 1px solid #e4e4e4; margin-top: 16px; padding-top: 12px; display: none; }
+
+  .muted { color: #666; }
+
+  @media (max-width: 480px) { #choices { grid-template-columns: 1fr; } }
+
+</style>
+
+</head>
+
+<body>
+
+
+  <!-- ...your HTML above... -->
+<button id="startBtn">Start</button>
+
+<!-- Load your JS file. No code here, just a reference. -->
+<script src="./app.js" defer></script>
+</body>
+</html>
+
+<header>
+
+  <div class="row" role="group" aria-label="Game controls">
+
+    <h1>GeoTrainer — 50 U.S. States</h1>
+
+    <label for="modeSelect">Mode:
+
+      <select id="modeSelect" aria-label="Select game mode">
+
+        <option value="state-capital">State → Capital</option>
+
+        <option value="capital-state">Capital → State</option>
+
+        <option value="abbr-state">Abbreviation → State</option>
+
+        <option value="typing">Typing (State → Capital)</option>
+
+      </select>
+
+    </label>
+
+    <label for="countSelect">Questions:
+
+      <select id="countSelect" aria-label="Select number of questions">
+
+        <option>10</option>
+
+        <option>25</option>
+
+        <option selected>50</option>
+
+      </select>
+
+    </label>
+
+    <button id="startBtn">Start</button>
+
+    <button id="skipBtn" disabled>Skip</button>
+
+    <div id="stats" aria-live="polite">Score 0 · Streak 0 · Q 0/0</div>
+
+  </div>
+
+</header>
+
+
+
+<main>
+
+  <div id="prompt" aria-live="polite">Press Start to begin.</div>
+
+  <div id="helper" class="muted"></div>
+
+
+
+  <div id="typingRow" class="row">
+
+    <input id="typeInput" type="text" placeholder="Type your answer…" autocomplete="off" aria-label="Type your answer" />
+
+    <button id="submitBtn">Submit</button>
+
+  </div>
+
+
+
+  <div id="choices" role="listbox" aria-label="Answer choices"></div>
+
+  <div id="feedback" aria-live="polite"></div>
+
+
+
+  <div id="end">
+
+    <h3>Round summary</h3>
+
+    <div id="summary"></div>
+
+    <button id="playAgain">Play again</button>
+
+  </div>
+
+</main
