@@ -1,6 +1,0 @@
-<svg viewBox="0 0 300 200" xmlns="http://www.w3.org/2000/svg">
-  <title>Mini US Map (placeholder)</title>
-  <rect id="CA" x="20"  y="80" width="80" height="60"/>
-  <rect id="FL" x="200" y="120" width="80" height="40"/>
-  <rect id="NY" x="220" y="30" width="60" height="40"/>
-</svg>
