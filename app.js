@@ -107,60 +107,66 @@ const STATES = [
 //Variables
 
 
-const feedback= document.getElementById('feedback')
-//const stats
+const feedback= document.getElementById('feedback');
+const submit = document.getElementById('submitBtn');
 const norm = s => String(s).trim().toLowerCase();
+let result = document.getElementById('score');
+const box = document.getElementById('box')
+const form = document.getElementById('formu'); 
 
-
+const located = new Set();
 
 let totalQuestion = 50;
-let deck = []
-let answer;
-let current = null;
-let score = 5;
+let deck = [];
+//let answer = document.getElementById('Answer');
+let score = 1;
 let questionNum = 0;
 
-submitBtn.onclick = gradeTyping
-typeInput.onkeydown = (e)=>{ if(e.key === 'Enter') gradeTyping(); };
+function show(msg) {
+  const fb = document.getElementById('feedback');
+  if (fb) fb.textContent = msg;   
+  console.log(msg);               
+}
 
-//function updateStats(){}
+function updateStats(){
+  
+
+}
 //Start round resets all attributes each time "Start!" is clicked. 
-shuffle(STATES);
-function startRound(array){
+function startRound(){
     score == 0; 
     questionNum == 0;
-    for(let i = array.length - 1; i > 0; i--){
+    /*for(let i = array.length - 1; i > 0; i--){
         const random = Math.floor(Math.random() * (i + 1));
-    }
+    }*/
 
     
 }
 function createDeck(){
 
 }
-function nextQuestion(){
-const index = deck[qIndex++];
-current = STATES[index]
+if (form){
+form.addEventListener('submit', e => {
+  e.preventDefault();
+  const guy = norm(box.value);
+  if (!guy) return;
 
-
-}
-
-//Check whether answer is correct, update question, and remove state from being answered again
-function gradeTyping(){
-  const user = typeInput.value;
-
-  const isRight = current.state
-
-  const isCorrect = norm(user) === norm(isRight);
-  if(isCorrect){
-
-    score++; 
-    feedback.textContent = 'Correct';
+  const agree = STATES.find(s => norm(s.state) === guy);
+  if (agree) {
     
+    result.textContent = `Score: ${score++}`;
+    console.log(result)
+    show('Feedback: Correct!')
   }
-    else{
-        feedback.textContent ='Wrong, try again'
-    }
+  else {
+    show('Feedback: This is not a state'); return;
 
+  }
+  
+  if (located.has(agree.state)){
+    show (`${agree.state} already entered`); box.select(); return;
+  }
+  located.add(agree.state);
+  
+})
 }
-

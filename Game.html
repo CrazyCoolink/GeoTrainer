@@ -4,20 +4,22 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+    <!---->
+    <script src="./app.js" defer></script>
 </head>
 <body>
     
     <h1>Type 50 States</h1>
 
-    <p>Score:</p>
+    <p id="score">Score:</p>
     
-    <form action="Game.html" method="GET">
+    <form  id="formu" novalidate autocomplete="off">
 
-        <label for="answer"> Enter state's name <em>(Spelling Matters):</em></label>
-        <input typ="Text" id="answer">
-
+        <label for="Answer"> Enter state's name <em>(Spelling Matters):</em></label>
+        <input type="Text" id="box">
+        <button id="submitBtn">Submit</button>
     </form>
-    <button id="submitBtn" onclick>Submit</button>
+    
     
     <p id="feedback">Feedback: </p>
 
