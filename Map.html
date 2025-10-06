@@ -1,128 +1,66 @@
+<!--// app.js
+document.addEventListener('DOMContentLoaded', () => {
+// 0) Make sure we’re on the page that actually has the map
+const svg = document.getElementById('MapUS');
+const ORDER = [ 'AK','AZ','CA','NM','NV', /* …exactly as in your CSV… */ ];
+if (!svg) { console.error('No inline <svg id="MapUS"> found on this page'); return; 
+}
+});
+// 1) Find shapes inside the inline svg
+// Prefer <path>, but if your export uses <g><path>… you still want the paths:
+let paths = svg.querySelectorAll('path');
+console.log('path count:', paths.length);
 
-The Aspect <crlink111@gmail.com>
-6:04 PM (0 minutes ago)
-to me
+if (paths.length === 0) {
+console.warn('Found 0 <path> elements. Is your map really inline? Does it use only polygons?');
+// As a fallback, try polygons:
+paths = svg.querySelectorAll('polygon, polyline');
+console.log('fallback polygon/polyline count:', paths.length);
+}
 
-<!doctype html>
-<html lang="en">
-<head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>GeoTrainer — U.S. States (with SVG Map)</title>
-<style>
-:root { --gap: 12px; --pad: 14px; }
-* { box-sizing: border-box; }
-body { margin: 0; font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; line-height: 1.45; }
-header { padding: 12px 14px; border-bottom: 1px solid #e4e4e4; display: grid; gap: var(--gap); }
-header .row { display: flex; gap: var(--gap); align-items: center; flex-wrap: wrap; }
-h1 { margin: 0 16px 0 0; font-size: 20px; }
-label { display: inline-flex; align-items: center; gap: 8px; }
-select, button, input[type="text"] { font-size: 16px; padding: 8px 10px; }
-button { cursor: pointer; }
-button[disabled] { opacity: .6; cursor: not-allowed; }
-#stats { margin-left: auto; color: #555; }
+// 2) If there are no ids yet, assign them in AK→WY order
+const ABBRS50 = [
+'AK','AL','AR','AZ','CA','CO','CT','DE','FL','GA',
+'HI','IA','ID','IL','IN','KS','KY','LA','MA','MD',
+'ME','MI','MN','MO','MS','MT','NC','ND','NE','NH',
+'NJ','NM','NV','NY','OH','OK','OR','PA','RI','SC',
+'SD','TN','TX','UT','VA','VT','WA','WI','WV','WY'
+];
 
-main { padding: 18px 14px; max-width: 1100px; margin: 0 auto; }
-#prompt { font-size: 22px; margin: 4px 0; }
-#helper { color: #666; margin-bottom: 10px; }
+const alreadyHasAnyId = !!svg.querySelector('path[id], polygon[id], polyline[id]');
+if (!alreadyHasAnyId && paths.length >= ABBRS50.length) {
+paths.forEach((el, i) => { if (ABBRS50[i]) el.id = ABBRS50[i]; });
+console.log('Assigned IDs to paths in AK→WY order.');
+}
 
-#choices { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: var(--gap); margin-top: 6px; }
-.choice { padding: var(--pad); border: 1px solid #cfcfcf; border-radius: 10px; background: #f7f7f7; text-align: left; }
-.choice:focus { outline: 3px solid #222; }
-.ok { background: #cdeece !important; border-color: #7fd189 !important; }
-.bad { background: #f6cbc6 !important; border-color: #e39489 !important; }
+const NON_STATES = new Set(['AS','DC','GU','MP','PR','VI']);
 
-#typingRow { display: none; gap: var(--gap); align-items: center; margin: 10px 0; }
-#typingRow input { min-width: 260px; }
-#feedback { min-height: 22px; margin-top: 8px; font-weight: 600; }
+// Assign IDs exactly to each path
+paths.forEach((el, i) => { el.id = ABBRS50[i]; });
 
-/* --- SVG map styles --- */
-#mapWrap { margin-top: 8px; border: 1px solid #e4e4e4; border-radius: 8px; padding: 8px; }
-#usMap { width: 100%; height: auto; max-height: 520px; }
-.region { fill: #eee; stroke: #555; stroke-width: 1; cursor: pointer; }
-.region:focus { outline: none; stroke-width: 2; }
-.state-ok { fill: #cdeece !important; }
-.state-bad { fill: #f6cbc6 !important; }
-.inactive { pointer-events: none; opacity: .5; }
+// Option 1: hide the 6 non-states (so clicks/colors ignore them)
+NON_STATES.forEach(code => document.getElementById(code)?.setAttribute('display','none'));
 
-#end { border-top: 1px solid #e4e4e4; margin-top: 16px; padding-top: 12px; display: none; }
-.muted { color: #666; }
-@media (max-width: 540px) { #choices { grid-template-columns: 1fr; } }
-</style>
-</head>
-<body>
-<header>
-<div class="row" role="group" aria-label="Game controls">
-<h1>GeoTrainer — 50 U.S. States</h1>
-<label for="modeSelect">Mode:
-<select id="modeSelect" aria-label="Select game mode">
-<option value="map">Map: Find the State</option>
-<option value="state-capital">State → Capital</option>
-<option value="capital-state">Capital → State</option>
-<option value="abbr-state">Abbreviation → State</option>
-<option value="typing">Typing (State → Capital)</option>
-</select>
-</label>
-<label for="countSelect">Questions:
-<select id="countSelect" aria-label="Select number of questions">
-<option>10</option>
-<option>25</option>
-<option selected>50</option>
-</select>
-</label>
-<button id="startBtn">Start</button>
-<button id="skipBtn" disabled>Skip</button>
-<div id="stats" aria-live="polite">Score 0 · Streak 0 · Q 0/0</div>
-</div>
-</header>
+// Option 2 (alternative): leave them visible but your game simply never references them.
 
-<main>
-<div id="prompt" aria-live="polite">Press Start to begin.</div>
-<div id="helper" class="muted"></div>
+// Test: turn CA green
+document.getElementById('CA')?.classList.add('state-ok');
 
-<!-- Typing mode -->
-<div id="typingRow" class="row">
-<input id="typeInput" type="text" placeholder="Type your answer…" autocomplete="off" aria-label="Type your answer" />
-<button id="submitBtn">Submit</button>
-</div>
 
-<!-- Multiple-choice -->
-<div id="choices" role="listbox" aria-label="Answer choices"></div>
 
-<!-- SVG MAP (inline so you own it; expand it later with more states) -->
-<div id="mapWrap" hidden>
-<svg id="usMap" viewBox="0 0 1000 620" aria-label="United States map" role="group">
-<title>U.S. Map (simplified demo — add all states later)</title>
-<!-- West (rough layout) -->
-<rect id="WA" data-name="Washington" class="region" x="70" y="60" width="120" height="60" tabindex="0" role="button" aria-label="Washington"></rect>
-<rect id="OR" data-name="Oregon" class="region" x="70" y="130" width="120" height="80" tabindex="0" role="button" aria-label="Oregon"></rect>
-<rect id="CA" data-name="California" class="region" x="70" y="220" width="140" height="200" tabindex="0" role="button" aria-label="California"></rect>
-<rect id="NV" data-name="Nevada" class="region" x="220" y="220" width="110" height="120" tabindex="0" role="button" aria-label="Nevada"></rect>
-<rect id="AZ" data-name="Arizona" class="region" x="220" y="350" width="120" height="90" tabindex="0" role="button" aria-label="Arizona"></rect>
-<rect id="UT" data-name="Utah" class="region" x="340" y="260" width="90" height="100" tabindex="0" role="button" aria-label="Utah"></rect>
-<rect id="CO" data-name="Colorado" class="region" x="430" y="260" width="120" height="100" tabindex="0" role="button" aria-label="Colorado"></rect>
-<rect id="NM" data-name="New Mexico" class="region" x="430" y="370" width="120" height="80" tabindex="0" role="button" aria-label="New Mexico"></rect>
-<rect id="TX" data-name="Texas" class="region" x="560" y="380" width="190" height="120" tabindex="0" role="button" aria-label="Texas"></rect>
-<!-- Midwest / East (very rough) -->
-<rect id="FL" data-name="Florida" class="region" x="800" y="460" width="150" height="60" tabindex="0" role="button" aria-label="Florida"></rect>
-<rect id="NY" data-name="New York" class="region" x="840" y="210" width="120" height="60" tabindex="0" role="button" aria-label="New York"></rect>
-<rect id="PA" data-name="Pennsylvania" class="region" x="780" y="230" width="120" height="50" tabindex="0" role="button" aria-label="Pennsylvania"></rect>
-<rect id="GA" data-name="Georgia" class="region" x="740" y="410" width="120" height="60" tabindex="0" role="button" aria-label="Georgia"></rect>
-<rect id="IL" data-name="Illinois" class="region" x="580" y="260" width="90" height="80" tabindex="0" role="button" aria-label="Illinois"></rect>
-<rect id="MI" data-name="Michigan" class="region" x="650" y="210" width="110" height="60" tabindex="0" role="button" aria-label="Michigan"></rect>
-<!-- Add the remaining states as you draw them; keep id=postal code and data-name=full name -->
-</svg>
-<p class="muted" style="margin:6px 4px 0">
-(Demo map: simplified rectangles with <code>id</code>=postal code and <code>data-name</code>=state name.
-Replace with your own outlines later.)
-</p>
-</div>
+function colorState(abbr) {
+// Try <path id="CA">, or a group <g id="CA"> if you later add groups
+const el = document.getElementById(abbr)
+|| document.querySelector(`#MapUS [id="${abbr}"]`);
+if (!el) { console.warn('No element found for', abbr); return; }
 
-<div id="feedback" aria-live="polite"></div>
-
-<div id="end">
-<h3>Round summary</h3>
-<div id="summary"></div>
-<button id="playAgain">Play again</button>
-</div>
-</main>
+// Add a class for CSS…
+el.classList.add('state-ok');
+// …and also set the attribute directly (wins over inline styles)
+if (el.tagName.toLowerCase() === 'path' || el.tagName.toLowerCase() === 'polygon') {
+el.setAttribute('fill', '#39b54a');
+} else {
+// if it's a <g>, color its children
+el.querySelectorAll('path, polygon').forEach(p => p.setAttribute('fill', '#39b54a'));
+}
+}

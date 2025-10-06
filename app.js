@@ -1,4 +1,4 @@
-const STATES = [
+const STATESS = [
 
       {state:"Alabama", capital:"Montgomery", abbr:"AL"},
 
@@ -103,6 +103,65 @@ const STATES = [
 ]
 
 
+// app.js (use type="module" in the <script> tag OR ensure this file is included only once)
+window.addEventListener('DOMContentLoaded', () => {
+console.log('script running');
+
+const svg = document.getElementById('MapUS');
+if (!svg) { console.error('No inline <svg id="MapUS"> found'); return; }
+
+// Grab shapes
+let paths = svg.querySelectorAll('path');
+console.log('path count:', paths.length);
+
+if (paths.length === 0) {
+// fallback in case your export used polygons
+paths = svg.querySelectorAll('polygon, polyline');
+console.log('polygon/polyline count:', paths.length);
+}
+
+
+
+// If your export has 56 (states + DC/territories) and was sorted by STUSPS:
+const ORDER56 = [
+'AK','AL','AR','AS','AZ','CA','CO','CT','DC','DE','FL','GA','GU','HI','IA','ID','IL','IN','KS','KY',
+'LA','MA','MD','ME','MI','MN','MO','MP','MS','MT','NC','ND','NE','NH','NJ','NM','NV','NY','OH','OK',
+'OR','PA','PR','RI','SC','SD','TN','TX','UT','VA','VI','VT','WA','WI','WV','WY'
+];
+
+// Assign ids once if none exist yet
+const hasAnyId = !!svg.querySelector('path[id], polygon[id], polyline[id]');
+if (!hasAnyId) {
+const order = (paths.length === 50) ? ORDER50 : (paths.length === 56 ? ORDER56 : null);
+if (!order) {
+console.warn('Unexpected number of shapes; cannot assign IDs by order.');
+} else {
+paths.forEach((el, i) => { if (order[i]) el.id = order[i]; });
+console.log('IDs assigned.');
+}
+}
+
+// Map from full name -> abbr (fill out the rest yourself)
+const NAME_TO_ABBR= {
+"alabama": "AL", "alaska": "AK", "arizona": "AZ", "arkansas": "AR",
+"california": "CA","colorado": "CO", "connecticut": "CT","delaware": "DE",
+"florida": "FL", "georgia": "GA", "hawaii": "HI", "idaho": "ID",
+"illinois": "IL", "indiana": "IN", "iowa": "IA", "kansas": "KS",
+"kentucky": "KY", "louisiana": "LA", "maine": "ME", "maryland": "MD",
+"massachusetts":"MA","michigan":"MI", "minnesota":"MN", "mississippi":"MS",
+"missouri":"MO", "montana":"MT", "nebraska":"NE", "nevada":"NV",
+"new hampshire":"NH","new jersey":"NJ","new mexico":"NM", "new york":"NY",
+"north carolina":"NC","north dakota":"ND","ohio":"OH", "oklahoma":"OK",
+"oregon":"OR", "pennsylvania":"PA","rhode island":"RI","south carolina":"SC",
+"south dakota":"SD","tennessee":"TN", "texas":"TX", "utah":"UT",
+"vermont":"VT", "virginia":"VA", "washington":"WA", "west virginia":"WV",
+"wisconsin":"WI", "wyoming":"WY"
+};
+});
+
+
+
+
 
 //Variables
 
@@ -151,7 +210,7 @@ form.addEventListener('submit', e => {
   const guy = norm(box.value);
   if (!guy) return;
 
-  const agree = STATES.find(s => norm(s.state) === guy);
+  const agree = STATESS.find(s => norm(s.state) === guy);
   if (agree) {
     
     result.textContent = `Score: ${score++}`;
@@ -170,3 +229,8 @@ form.addEventListener('submit', e => {
   
 })
 }
+
+
+
+
+

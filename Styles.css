@@ -1,0 +1,5 @@
+/* styles.css */
+#MapUS { width: 100%; height: auto; display: block; }
+#MapUS path { fill: #eee; stroke: #555; stroke-width: 1; }
+/* ensure we can recolor even if the SVG paths have inline fill styles */
+.state-ok, .state-ok { fill: #39b54a !important; }
