@@ -8,8 +8,8 @@ html, body { height: 100%; margin: 0; padding: 0; }
 
 
 
-html, body { overflow-x: hidden; }
-html, body { overflow-y: hidden; }
+/*html, body { overflow-x: hidden; }
+html, body { overflow-y: hidden; }*/
 body{
     /*background-color:rgb(255, 254, 221);*/
     background-image: url(USA\ Flag.jpg);
@@ -54,6 +54,12 @@ h1{
     display: none;
 }
 #MapUS #VI, #MapUS [id="VI"] {
+    display: none;
+}
+#MapUS #AS, #MapUS [id="AS"] {
+    display: none;
+}
+#MapUS #MP, #MapUS [id="MP"] {
     display: none;
 }
 #MapUS * {pointer-events: none;}
