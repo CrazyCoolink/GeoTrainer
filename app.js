@@ -131,6 +131,7 @@ let questionNum = 0;
 
 
 
+
 // app.js — robust, self-contained
 (() => {
 'use strict';
@@ -160,6 +161,11 @@ const NAME_TO_ABBR = {
 "utah":"UT","vermont":"VT","virginia":"VA","washington":"WA","west virginia":"WV","wisconsin":"WI","wyoming":"WY"
 };
 const NON_STATES = new Set(["DC","PR","GU","VI","AS","MP"]); // if your SVG has 56 features
+
+
+
+
+
 
 /* ===== Helpers ===== */
 const norm = s => String(s||'').trim().toLowerCase().replace(/\s+/g,' ');
@@ -299,7 +305,7 @@ input.focus();
 if (found.size === 50) show('🏁 You got all 50!');
 });
 }
-const ENABLE_CLICK_COLORING = false; // <- set to true if you want the click behavior
+ // <- set to true if you want the click behavior
 
 function handleClickToMark(e) {
   const target = e.target.closest('path, g, polygon, polyline');
@@ -348,54 +354,44 @@ return true;
 }
 
 // Update stats + progress bar (call after each correct answer)
-function updateStats(foundCount, total=50){
+/*function updateStats(foundCount, total=50){
 const left = total - foundCount;
 document.getElementById('stat-correct').textContent = `${foundCount} / ${total}`;
 document.getElementById('stat-remaining').textContent = `${left}`;
 const p = Math.max(0, Math.min(1, foundCount/total));
 const bar = document.querySelector('#progress .progress__bar');
 if (bar) bar.style.setProperty('--p', p);
-}
+}*/
 //Start round resets all attributes each time "Start!" is clicked. 
 function startRound(){
     score == 0; 
     questionNum == 0;
-    /*for(let i = array.length - 1; i > 0; i--){
-        const random = Math.floor(Math.random() * (i + 1));
-    }*/
-
-    
-}
-function createDeck(){
-
-}
-/*if (form){
-form.addEventListener('submit', e => {
-  e.preventDefault();
-  const guy = norm(box.value);
-  if (!guy) return;
-
-  const agree = STATESS.find(s => norm(s.state) === guy);
-  if (agree) {
-    
-    result.textContent = `Score: ${score++}`;
-    console.log(result)
-    show('Feedback: Correct!')
-  }
-  else {
-    show('Feedback: This is not a state'); return;
-
-  }
   
-  if (located.has(agree.state)){
-    show (`${agree.state} already entered`); box.select(); return;
-  }
-  located.add(agree.state);
-  
-})
-}
+} 
 
+/*
+let time = clock * 60;
+const Timer = document.getElementById("Time")
+
+setInterval(updateCountdown, 1000);
+
+
+function updateCountdown() {
+  const min = Math.floor(time/60);
+  let sec = time % 60;
+
+  sec = sec < .15 ? '0' + sec : sec;
+
+
+  Timer.innerHTML = `${min}: ${sec}`;
+  time--;
+
+  if (Timer<0) {
+    clearInterval(refreshIntervalId)
+  }
+}      
 */
+
 
 
 

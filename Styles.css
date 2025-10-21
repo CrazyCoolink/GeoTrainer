@@ -1,5 +1,98 @@
-.MapUS{
-    height: 2000%;
-    width: 2000%;
+@font-face{
+    src:url(fonts/CloisterBlackLight-axjg.ttf);
+    font-family: York-Light;
+}
+
+* { box-sizing: border-box; }
+html, body { height: 100%; margin: 0; padding: 0; }
+
+
+
+html, body { overflow-x: hidden; }
+html, body { overflow-y: hidden; }
+body{
+    /*background-color:rgb(255, 254, 221);*/
+    background-image: url(USA\ Flag.jpg);
+    background-repeat: no-repeat;
+    background-position: center;
+    background-attachment: fixed;
+    background-size: cover;
+    opacity: 1;
+}
+.pill{
+    display:inline-block;
+    background:rgb(255, 255, 255);
+    color:rgb(0, 0, 0);
+    padding: .25em .6em;
+    border-radius: .5em;
+    line-height: 1;
+}
+
+h1{
+    font-family: York-Light, Verdana, Geneva, Tahoma, sans-serif;
+    text-align: center;
+    font-size: 65px;
+    font-weight: bolder;
+    display: inline-block;
+    display:flex; 
+    justify-content:center; 
+    align-items:center;
+    
+
+}
+#submitBtn{
+    display: inline-block;
+    transition-duration: 0.4s;
+    cursor: pointer;
+    font-size: 16px;
+}
+#submitBtn:hover {
+  background-color: #caad0b;
+  color: rgb(0, 0, 0);
+}
+#MapUS #PR, #MapUS [id="PR"] {
+    display: none;
+}
+#MapUS #VI, #MapUS [id="VI"] {
+    display: none;
+}
+#MapUS * {pointer-events: none;}
+#MapUS{
+    display:block;
+    width:150%;
+    height:auto;
+    
+}
+
+#MapUS path{
+    
+    fill: #6e6e6e;
+    stroke: #00e1ff;
+    stroke-width: 0.5px;
+    paint-order: stroke fill;
+    margin-left: 10px;
+
+}
+#answerForm{
+    margin-top: 75px;
+    text-align: center;
+    font-family: Arial, Helvetica, sans-serif, Geneva, Tahoma, sans-serif;
+    font-size: 25px;
+    
+    
+}
+#feedback{
+    text-align: center;
+    font-family: Arial, Helvetica, sans-serif, Geneva, Tahoma, sans-serif;
+    font-size: 25px;
+    background-color: rgba(255, 255, 255, 0.6);
+    
+    
+   
+}
+.state-ok,
+.state-ok * {
+
+fill: #22c55e !important;
 }
 
