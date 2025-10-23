@@ -8,10 +8,10 @@ html, body { height: 100%; margin: 0; padding: 0; }
 
 
 
-/*html, body { overflow-x: hidden; }
-html, body { overflow-y: hidden; }*/
+html, body { overflow-x: hidden; }
+html, body { overflow-y: hidden; }
 body{
-    /*background-color:rgb(255, 254, 221);*/
+   
     background-image: url(USA\ Flag.jpg);
     background-repeat: no-repeat;
     background-position: center;

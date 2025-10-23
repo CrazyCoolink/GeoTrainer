@@ -102,21 +102,18 @@ const STATESS = [
 
 ]
 
-//Variables
+
 
 
 const feedback= document.getElementById('feedback');
 const submit = document.getElementById('submitBtn');
 const norm = s => String(s).trim().toLowerCase();
 let result = document.getElementById('score');
-//const box = document.getElementById('box')
-//const form = document.getElementById('formu'); 
 
 const located = new Set();
 
 let totalQuestion = 50;
 let deck = [];
-//let answer = document.getElementById('Answer');
 let score = 1;
 let questionNum = 0;
 
@@ -132,11 +129,10 @@ let questionNum = 0;
 
 
 
-// app.js — robust, self-contained
 (() => {
 'use strict';
 
-/* ===== Data (top so there’s no “already declared” collision) ===== */
+
 const ORDER50 = [
 'AK','AL','AR','AZ','CA','CO','CT','DE','FL','GA',
 'HI','IA','ID','IL','IN','KS','KY','LA','MA','MD',
@@ -160,14 +156,10 @@ const NAME_TO_ABBR = {
 "rhode island":"RI","south carolina":"SC","south dakota":"SD","tennessee":"TN","texas":"TX",
 "utah":"UT","vermont":"VT","virginia":"VA","washington":"WA","west virginia":"WV","wisconsin":"WI","wyoming":"WY"
 };
-const NON_STATES = new Set(["DC","PR","GU","VI","AS","MP"]); // if your SVG has 56 features
+const NON_STATES = new Set(["DC","PR","GU","VI","AS","MP"]); 
 
 
 
-
-
-
-/* ===== Helpers ===== */
 const norm = s => String(s||'').trim().toLowerCase().replace(/\s+/g,' ');
 const toAbbr = input => {
 const t = norm(input);
@@ -187,7 +179,6 @@ if (!svg) return false;
 let node = svg.querySelector(`#${CSS.escape(abbr)}`) || svg.querySelector(`[id="${abbr}"]`);
 if (!node) return false;
 node.classList.add('state-ok');
-// force fill for paths inside a group too
 const paint = el => el.setAttribute('fill', '#22c55e');
 if (node.tagName.toLowerCase() === 'g') {
 node.querySelectorAll('path,polygon,polyline').forEach(paint);
@@ -207,9 +198,7 @@ if (r) r.textContent = String(left);
 if (bar) bar.style.setProperty('--p', Math.max(0, Math.min(1, foundCount/total)));
 }
 
-// Pick the main layer and detect whether states are <path> or <g> per state.
 function findStateNodes(svg){
-// choose the <g> that has the most state-like children
 const groups = Array.from(svg.querySelectorAll('g'));
 let layer = svg, bestScore = -1;
 for (const g of groups) {
@@ -217,20 +206,17 @@ const kids = Array.from(g.children);
 const score = kids.filter(n => /^(path|g|polygon|polyline)$/i.test(n.tagName)).length;
 if (score > bestScore) { bestScore = score; layer = g; }
 }
-// direct children only (avoid nested artifacts/defs)
 let direct = Array.from(layer.children).filter(n => !n.closest('defs'));
 let gNodes = direct.filter(n => n.tagName.toLowerCase()==='g');
 let pNodes = direct.filter(n => /^(path|polygon|polyline)$/i.test(n.tagName));
 
 let nodes = (gNodes.length >= 50 && gNodes.length >= pNodes.length) ? gNodes : pNodes;
 
-// drop zero-area shapes
 nodes = nodes.filter(n => {
 try { const b = n.getBBox(); return b.width > 0 && b.height > 0; }
 catch { return true; }
 });
 
-// If there are more than 56, keep the largest 56 by area (or 50 if you filtered territories)
 const target = (nodes.length >= 56) ? 56 : 50;
 if (nodes.length > target) {
 nodes = nodes
@@ -243,7 +229,6 @@ return nodes;
 }
 
 function assignIdsIfMissing(svg){
-// If any element already has a two-letter id, assume IDs exist
 if (svg.querySelector('path[id][id^="A"], g[id="CA"], [id="NY"]')) return;
 
 const nodes = findStateNodes(svg);
@@ -257,22 +242,20 @@ nodes.forEach((node, i) => { if (order[i]) node.id = order[i]; });
 console.log('[Geo] Assigned IDs by order:', order.length);
 }
 
-/* ===== Main wiring ===== */
 window.addEventListener('DOMContentLoaded', () => {
 const svg = document.getElementById('MapUS');
 if (!svg) { console.error('No inline <svg id="MapUS"> found'); return; }
 
 assignIdsIfMissing(svg);
 
-// Click-to-mark (nice UX boost)
+
 svg.addEventListener('click', (e) => {
 const target = e.target.closest('path, g, polygon, polyline');
 if (!target || !target.id) return;
 const abbr = target.id;
-if (!ORDER50.includes(abbr)) return; // ignore territories if present
+if (!ORDER50.includes(abbr)) return; 
 if (target.classList.contains('state-ok')) return;
 colorState(abbr);
-// also bump stats if you want clicks to count:
 const cEl = document.getElementById('stat-correct');
 if (cEl) {
 const m = cEl.textContent.match(/(\d+)\s*\/\s*(\d+)/);
@@ -280,7 +263,6 @@ if (m) updateStats(Math.min(Number(m[1])+1, 50), Number(m[2]));
 }
 });
 
-// Form grading
 const form = document.getElementById('answerForm');
 const input = document.getElementById('answer');
 const found = new Set();
@@ -305,27 +287,13 @@ input.focus();
 if (found.size === 50) show('🏁 You got all 50!');
 });
 }
- // <- set to true if you want the click behavior
-
-function handleClickToMark(e) {
-  const target = e.target.closest('path, g, polygon, polyline');
-  if (!target || !target.id) return;
-  const abbr = target.id;
-  if (!ENABLE_CLICK_COLORING) return;     // <-- block coloring when false
-  if (target.classList.contains('state-ok')) return;
-  colorState(abbr);
-  // (optional) updateStats(...) if you want clicks to count
-}
 
 svg.addEventListener('click', handleClickToMark);
-// Init stats
 updateStats(0, 50);
-// Log shape count for debugging
 const shapeCount = svg.querySelectorAll('path, polygon, polyline').length;
 console.log('[Geo] Shape count in SVG:', shapeCount);
 });
 
-// expose only if you want to call from console
 window.GeoApp = { colorState };
 
 })();
@@ -344,53 +312,21 @@ function updateStats(){
 
 }
 
-// Coloring helper (works whether path has inline styles or not)
 function colorState(abbr){
 const el = document.getElementById(abbr) || document.querySelector(`#MapUS [id="${abbr}"]`);
 if (!el) return false;
 el.classList.add('state-ok');
-el.setAttribute('fill', '#22c55e'); // force green
+el.setAttribute('fill', '#22c55e'); 
 return true;
 }
 
-// Update stats + progress bar (call after each correct answer)
-/*function updateStats(foundCount, total=50){
-const left = total - foundCount;
-document.getElementById('stat-correct').textContent = `${foundCount} / ${total}`;
-document.getElementById('stat-remaining').textContent = `${left}`;
-const p = Math.max(0, Math.min(1, foundCount/total));
-const bar = document.querySelector('#progress .progress__bar');
-if (bar) bar.style.setProperty('--p', p);
-}*/
-//Start round resets all attributes each time "Start!" is clicked. 
 function startRound(){
     score == 0; 
     questionNum == 0;
   
 } 
 
-/*
-let time = clock * 60;
-const Timer = document.getElementById("Time")
 
-setInterval(updateCountdown, 1000);
-
-
-function updateCountdown() {
-  const min = Math.floor(time/60);
-  let sec = time % 60;
-
-  sec = sec < .15 ? '0' + sec : sec;
-
-
-  Timer.innerHTML = `${min}: ${sec}`;
-  time--;
-
-  if (Timer<0) {
-    clearInterval(refreshIntervalId)
-  }
-}      
-*/
 
 
 
